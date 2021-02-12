@@ -31,7 +31,7 @@ class Game(arcade.Window):
         
 
         
-        arcade.set_background_color(arcade.color.CORNFLOWER_BLUE)
+        arcade.set_background_color(arcade.color.BLACK_LEATHER_JACKET)
         
 
     def on_draw(self):
@@ -113,8 +113,10 @@ class Game(arcade.Window):
             pass
 
         if key == arcade.key.SPACE:
-            bullet = Sprite(filename="game_piece_red.png", center_x=self.player.center_x, center_y=self.player.center_y)
+            bullet = Sprite(filename="game_piece_red.png", \
+                center_x=self.player.center_x, center_y=self.player.center_y)
             bullet.change_y = 30
+            bullet.scale = .25 
             self.bullets.append(bullet)
 
             
