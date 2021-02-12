@@ -6,6 +6,12 @@ print("swift")
 
 print("hello")
 
+hello = 12
+print(hello)
+
+sup = 23
+print(sup)
+
 def display_something():
     print("something")
 
