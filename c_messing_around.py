@@ -5,6 +5,8 @@ import math
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 
+PLAYER_SPEED = 5
+
 class MenuView(arcade.View):
     """ Class that manages the 'menu' view. """
 
@@ -39,21 +41,24 @@ class GameView(arcade.View):
         """
         super().__init__()
 
+        self._keys = set()
+
         self.score = 0
 
-        self.player = Sprite(filename="star-shooter.png")
-        self.player.center_x = SCREEN_WIDTH // 2
-        self.player.center_y = SCREEN_HEIGHT // 3
-        self.player.change_x = 3
-        self.player.scale = .25
+        self.init_player()
 
         self.window.set_mouse_visible(False)
 
         self.bullets = []
-        
 
         
         arcade.set_background_color(arcade.color.BLACK_LEATHER_JACKET)
+
+    def init_player(self):
+        self.player = Sprite(filename="star-shooter.png")
+        self.player.center_x = SCREEN_WIDTH // 2
+        self.player.center_y = SCREEN_HEIGHT // 7
+        self.player.scale = .25
         
 
     def on_draw(self):
@@ -65,9 +70,11 @@ class GameView(arcade.View):
         # clear the screen to begin drawing
         arcade.start_render()
         self.draw_score()
-        self.player.draw()
+        
         for bullet in self.bullets:
             bullet.draw()
+
+        self.player.draw()
         
 
 
@@ -95,24 +102,33 @@ class GameView(arcade.View):
         # Check to see if keys are being held, and then
         # take appropriate action
         self.check_keys()
-        self.player.update()
+        self.check_off_screen()
+        
         for bullet in self.bullets:
             bullet.update()
 
 
-        
         if ((self.player.center_x > SCREEN_WIDTH and self.player.change_x > 0) or \
             (self.player.center_x < 0 and self.player.change_x < 0)):
-            self.player.change_x *= -1
+            self.player.change_x = 0
+
+        
+    def check_off_screen(self):
+        """ 
+        Removes sprites that have gone off screen
+        """
+        for bullet in self.bullets:
+            if bullet.bottom > SCREEN_HEIGHT + bullet.height:
+                self.bullets.remove(bullet)
             
         
-
     def check_keys(self):
         """
         Checks to see if the user is holding down an
         arrow key, and if so, takes appropriate action.
         """
-        pass
+        if arcade.key.LEFT in self._keys or arcade.key.RIGHT in self._keys:
+            self.player.update()
 
     def on_key_press(self, key, key_modifiers):
         """
@@ -123,13 +139,15 @@ class GameView(arcade.View):
         """
         
         if key == arcade.key.LEFT or key == arcade.key.DOWN:
-            self.player.change_x = -3
+            self.player.change_x = -PLAYER_SPEED
+            self._keys.add(key)
 
         if key == arcade.key.RIGHT or key == arcade.key.UP:
-            self.player.change_x = 3
+            self.player.change_x = PLAYER_SPEED
+            self._keys.add(key)
             
-        if key == arcade.key.W or key == arcade.key.D:
-            pass
+        if key == arcade.key.B:
+            print(self.bullets)
             
         if key == arcade.key.S or key == arcade.key.A:
             pass
@@ -151,10 +169,10 @@ class GameView(arcade.View):
         :param key_modifiers: Things like shift, ctrl, etc
         """
         if key == arcade.key.LEFT or key == arcade.key.DOWN:
-            pass
+            self._keys.remove(key)
 
         if key == arcade.key.RIGHT or key == arcade.key.UP:
-            pass
+            self._keys.remove(key)
             
         if key == arcade.key.W or key == arcade.key.D:
             pass
