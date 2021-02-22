@@ -1,9 +1,10 @@
 from globals import *
 from meteors import Meteor
+from ship import Ship
 
 
 
-PLAYER_SPEED = 5
+
 
 class MenuView(arcade.View):
     """ Class that manages the 'menu' view. """
@@ -43,7 +44,8 @@ class GameView(arcade.View):
 
         self.score = 0
 
-        self.init_player()
+        self.ship = Ship()
+
 
         self.window.set_mouse_visible(False)
 
@@ -54,12 +56,6 @@ class GameView(arcade.View):
         
         arcade.set_background_color(arcade.color.BLACK_LEATHER_JACKET)
 
-    def init_player(self):
-        self.player = Sprite(filename="star-shooter.png")
-        self.player.center_x = SCREEN_WIDTH // 2
-        self.player.center_y = SCREEN_HEIGHT // 7
-        self.player.scale = .25
-        
 
     def on_draw(self):
         """
@@ -77,7 +73,7 @@ class GameView(arcade.View):
         for meteor in self.meteors:
             meteor.draw()
 
-        self.player.draw()
+        self.ship.draw()
         
 
 
@@ -117,9 +113,9 @@ class GameView(arcade.View):
             self.create_meteor()
 
 
-        if ((self.player.center_x > SCREEN_WIDTH and self.player.change_x > 0) or \
-            (self.player.center_x < 0 and self.player.change_x < 0)):
-            self.player.change_x = 0
+        if ((self.ship.center_x > SCREEN_WIDTH and self.ship.change_x > 0) or \
+            (self.ship.center_x < 0 and self.ship.change_x < 0)):
+            self.ship.change_x = 0
 
     def create_meteor(self):
         self.meteors.append(Meteor())
@@ -140,7 +136,7 @@ class GameView(arcade.View):
         arrow key, and if so, takes appropriate action.
         """
         if arcade.key.LEFT in self._keys or arcade.key.RIGHT in self._keys:
-            self.player.update()
+            self.ship.update()
 
     def on_key_press(self, key, key_modifiers):
         """
@@ -151,11 +147,11 @@ class GameView(arcade.View):
         """
         
         if key == arcade.key.LEFT or key == arcade.key.DOWN:
-            self.player.change_x = -PLAYER_SPEED
+            self.ship.move_left()
             self._keys.add(key)
 
         if key == arcade.key.RIGHT or key == arcade.key.UP:
-            self.player.change_x = PLAYER_SPEED
+            self.ship.move_right()
             self._keys.add(key)
             
         if key == arcade.key.B:
@@ -165,8 +161,8 @@ class GameView(arcade.View):
             pass
 
         if key == arcade.key.SPACE:
-            bullet = Sprite(filename="bullet.png", \
-                center_x=self.player.center_x, center_y=self.player.center_y)
+            bullet = Sprite(filename="images/bullet.png", \
+                center_x=self.ship.center_x, center_y=self.ship.center_y)
             bullet.change_y = 30
             bullet.scale = .20
             self.bullets.append(bullet)
