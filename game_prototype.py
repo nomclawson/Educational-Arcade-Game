@@ -1,9 +1,7 @@
-import arcade
-from arcade import Sprite
-import math
+from globals import *
+from meteors import Meteor
 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+
 
 PLAYER_SPEED = 5
 
@@ -51,6 +49,8 @@ class GameView(arcade.View):
 
         self.bullets = []
 
+        self.meteors = []
+
         
         arcade.set_background_color(arcade.color.BLACK_LEATHER_JACKET)
 
@@ -73,6 +73,9 @@ class GameView(arcade.View):
         
         for bullet in self.bullets:
             bullet.draw()
+
+        for meteor in self.meteors:
+            meteor.draw()
 
         self.player.draw()
         
@@ -107,10 +110,19 @@ class GameView(arcade.View):
         for bullet in self.bullets:
             bullet.update()
 
+        for meteor in self.meteors:
+            meteor.update()
+
+        if randint(0,50) == 1:
+            self.create_meteor()
+
 
         if ((self.player.center_x > SCREEN_WIDTH and self.player.change_x > 0) or \
             (self.player.center_x < 0 and self.player.change_x < 0)):
             self.player.change_x = 0
+
+    def create_meteor(self):
+        self.meteors.append(Meteor())
 
         
     def check_off_screen(self):
