@@ -10,4 +10,4 @@ class Meteor(Sprite):
         self.center_x = randint(0,SCREEN_WIDTH)
         self.center_y = SCREEN_HEIGHT + (self.height // 2) + 1
         self.change_y = randint(-5,-3)
-        
+        self.alive = True

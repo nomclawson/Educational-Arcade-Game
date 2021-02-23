@@ -1,9 +1,7 @@
 from globals import *
 from meteors import Meteor
 from ship import Ship
-
-
-
+from views import GameOverView
 
 
 class MenuView(arcade.View):
@@ -49,12 +47,12 @@ class GameView(arcade.View):
 
         self.window.set_mouse_visible(False)
 
-        self.bullets = []
+        self.bullets = SpriteList()
 
-        self.meteors = []
+        self.meteors = SpriteList()
 
         
-        arcade.set_background_color(arcade.color.BLACK_LEATHER_JACKET)
+        arcade.set_background_color(arcade.color.AIR_FORCE_BLUE)
 
 
     def on_draw(self):
@@ -117,8 +115,31 @@ class GameView(arcade.View):
             (self.ship.center_x < 0 and self.ship.change_x < 0)):
             self.ship.change_x = 0
 
+        self.check_collisions()
+        
+
     def create_meteor(self):
         self.meteors.append(Meteor())
+
+    def check_collisions(self):
+        for meteor in self.meteors:
+            if meteor.collides_with_list(self.bullets):
+                meteor.alive = False
+                self.score += 10
+
+            elif meteor.bottom <= 0:
+                self.window.show_view(GameOverView(self.score))
+
+        self.clean_up_zombies()
+
+    def clean_up_zombies(self):
+        for meteor in self.meteors:
+            if not meteor.alive:
+                self.meteors.remove(meteor)
+
+        # for bullet in self.bullets:
+        #     if not bullet.alive:
+        #         self.bullets.remove(meteor)
 
         
     def check_off_screen(self):
@@ -161,11 +182,15 @@ class GameView(arcade.View):
             pass
 
         if key == arcade.key.SPACE:
-            bullet = Sprite(filename="images/bullet.png", \
-                center_x=self.ship.center_x, center_y=self.ship.center_y)
-            bullet.change_y = 30
-            bullet.scale = .20
+            bullet = self.create_bullet()
             self.bullets.append(bullet)
+
+    def create_bullet(self):
+        bullet = Sprite(filename="images/bullet.png", \
+                center_x=self.ship.center_x, center_y=self.ship.center_y)
+        bullet.change_y = 30
+        bullet.scale = .15
+        return bullet
 
             
 
