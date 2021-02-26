@@ -15,7 +15,7 @@ def send(msg):
 	print(f"Sending score to {SERVER}...")
 	client.connect(ADDR)
 
-	msg = "\n" + msg + "<br>"
+	#msg = "\n" + msg 
 	message = msg.encode(FORMAT)
 	msg_length = len(message)
 	send_length = str(msg_length).encode(FORMAT)
