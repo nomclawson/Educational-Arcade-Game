@@ -2,6 +2,7 @@ from globals import *
 from meteors import Meteor
 from ship import Ship
 from views import GameOverView
+from client import *
 
 
 class MenuView(arcade.View):
@@ -10,19 +11,21 @@ class MenuView(arcade.View):
     def on_show(self):
         """ Called when switching to this view"""
         arcade.set_background_color(arcade.color.BLACK_LEATHER_JACKET)
-
+        
     def on_draw(self):
         """ Draw the menu """
         arcade.start_render()
-        arcade.draw_text("Math Game?", SCREEN_WIDTH/2, SCREEN_HEIGHT/2,
+        arcade.draw_text("Math Game?", SCREEN_WIDTH//2, SCREEN_HEIGHT/3,
                          arcade.color.WHITE, font_size=30, anchor_x="center")
-        #arcade.draw_text("Click if you want!", SCREEN_WIDTH/2, SCREEN_HEIGHT/2,
-        #                 arcade.color.BLACK, font_size=30, anchor_x="center")
+        arcade.draw_text("Click if you want!", SCREEN_WIDTH/2, SCREEN_HEIGHT/2,
+                    arcade.color.BLACK, font_size=30, anchor_x="center")
 
     def on_mouse_press(self, _x, _y, _button, _modifiers):
         """ Use a mouse press to advance to the 'game' view. """
         game_view = GameView()
         self.window.show_view(game_view)
+        self.window.set_mouse_visible(visible=True)
+        
 
 
 class GameView(arcade.View):
@@ -41,8 +44,10 @@ class GameView(arcade.View):
         self._keys = set()
 
         self.score = 0
+        self.lives = PLAYER_LIVES
 
         self.ship = Ship()
+        
 
 
         self.window.set_mouse_visible(False)
@@ -51,6 +56,7 @@ class GameView(arcade.View):
 
         self.meteors = SpriteList()
 
+        
         
         arcade.set_background_color(arcade.color.AIR_FORCE_BLUE)
 
@@ -64,6 +70,8 @@ class GameView(arcade.View):
         # clear the screen to begin drawing
         arcade.start_render()
         self.draw_score()
+
+        
         
         for bullet in self.bullets:
             bullet.draw()
@@ -128,7 +136,11 @@ class GameView(arcade.View):
                 self.score += 10
 
             elif meteor.bottom <= 0:
-                self.window.show_view(GameOverView(self.score))
+                self.lives -= 1
+                meteor.alive = False
+                if self.lives <=0:
+                    self.window.show_view(GameOverView(self.score))
+                    self.window.set_mouse_visible(visible=True)
 
         self.clean_up_zombies()
 
@@ -175,15 +187,16 @@ class GameView(arcade.View):
             self.ship.move_right()
             self._keys.add(key)
             
-        if key == arcade.key.B:
-            print(self.bullets)
-            
         if key == arcade.key.S or key == arcade.key.A:
             pass
 
         if key == arcade.key.SPACE:
             bullet = self.create_bullet()
             self.bullets.append(bullet)
+
+
+        if key == arcade.key.ESCAPE:
+            arcade.close_window()
 
     def create_bullet(self):
         bullet = Sprite(filename="images/bullet.png", \
@@ -217,10 +230,16 @@ class GameView(arcade.View):
 
 def main():
     """ Main method """
-
-    window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT)
+    
+    # window = arcade.Window(fullscreen=True,resizable=True)
+    window = WINDOW
+    
+    
+    
+    
     menu_view = MenuView()
     window.show_view(menu_view)
+    window.set_mouse_visible(visible=True)
     arcade.run()
 
 if __name__ == "__main__":
