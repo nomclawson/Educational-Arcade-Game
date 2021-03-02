@@ -12,15 +12,15 @@ class MenuView(arcade.View):
 
 	def on_show(self):
 		""" Called when switching to this view"""
-		arcade.set_background_color(arcade.color.BLACK_LEATHER_JACKET)
+		arcade.set_background_color(arcade.color.ARSENIC)
 
 	def on_draw(self):
 		""" Draw the menu """
 		arcade.start_render()
 		arcade.draw_text("Math Game?", SCREEN_WIDTH/2, SCREEN_HEIGHT/2,
 						 arcade.color.WHITE, font_size=30, anchor_x="center")
-		#arcade.draw_text("Click if you want!", SCREEN_WIDTH/2, SCREEN_HEIGHT/2,
-		#				  arcade.color.BLACK, font_size=30, anchor_x="center")
+		arcade.draw_text("Click to advance", SCREEN_WIDTH/2, SCREEN_HEIGHT/2-75,
+                         arcade.color.WHITE, font_size=20, anchor_x="center")
 
 	def on_mouse_press(self, _x, _y, _button, _modifiers):
 		""" Use a mouse press to advance to the 'game' view. """
