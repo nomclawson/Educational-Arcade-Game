@@ -24,7 +24,7 @@ class MenuView(arcade.View):
 
 	def on_mouse_press(self, _x, _y, _button, _modifiers):
 		""" Use a mouse press to advance to the 'game' view. """
-		game_view = GameView()
+		game_view = GameView() 
 		self.window.show_view(game_view)
 
 class GameView(arcade.View):
@@ -314,7 +314,7 @@ class GameView(arcade.View):
 def main():
 	""" Main method """
 
-	window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT)
+	window = WINDOW
 	menu_view = MenuView()
 	window.show_view(menu_view)
 	arcade.run()
