@@ -9,6 +9,8 @@ class Ship(Sprite):
         self.center_x = SCREEN_WIDTH // 2
         self.center_y = SCREEN_HEIGHT // 7
         self.scale = .2
+        self.alive = True
+        self.framesAfterDead = 20
 
     def move_left(self):
         self.change_x = -SHIP_SPEED

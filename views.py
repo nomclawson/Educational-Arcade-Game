@@ -3,7 +3,6 @@ from client import *
 
 
 
-
 class GameOverView(arcade.View):
     """ Class that manages the 'menu' view. """
     def __init__(self, score):
