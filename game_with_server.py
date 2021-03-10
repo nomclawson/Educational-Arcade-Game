@@ -3,9 +3,10 @@ from meteors import Meteor
 from ship import Ship
 from laser import Laser
 from explosion import Explosion
+from reload_box import ReloadBox
 from explosion import createExplosionTextureList
-from views import GameOverView
-from client import *
+
+
 
 class MenuView(arcade.View):
 	""" Class that manages the 'menu' view. """
@@ -28,9 +29,6 @@ class MenuView(arcade.View):
 		self.window.show_view(game_view)
 
 class GameView(arcade.View):
-	"""
-	
-	"""
 	def __init__(self):
 		"""
 		Sets up the initial conditions of the game
@@ -42,6 +40,8 @@ class GameView(arcade.View):
 		self._keys = set()
 
 		self.score = 0
+
+		self.reload_box = ReloadBox()
 
 		#Objects
 		self.ship = Ship()
@@ -74,6 +74,7 @@ class GameView(arcade.View):
 
 		# clear the screen to begin drawing
 		arcade.start_render()
+		self.reload_box.draw()
 		self.draw_score()
 		
 		for bullet in self.bullets:
@@ -86,6 +87,8 @@ class GameView(arcade.View):
 			self.ship.draw()
 		
 		self.animations.draw()
+
+		
 
 		#Verify if animations have been loaded
 		if(not self.animationsLoaded):
@@ -241,6 +244,9 @@ class GameView(arcade.View):
 				# Gunshot sound
 				arcade.sound.play_sound(self.gun_sound)
 
+		if key == arcade.key.ESCAPE:			
+			self.gameOver()
+
 	def on_key_release(self, key, key_modifiers):
 		"""
 		Called when a key is released. Sets the state of
@@ -307,9 +313,11 @@ class GameView(arcade.View):
 		"""
 		Renders the GemeOverView and sends the score to the server
 		"""
-		self.window.show_view(GameOverView(self.score))
+		self.window.show_view(VIEWS["gameOver"](GameView,self.score))
 		#Send score to server
-		send(f"{self.score}")
+		#send(f"{self.score}")
+
+
 
 def main():
 	""" Main method """

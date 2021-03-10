@@ -2,15 +2,23 @@ import arcade
 from arcade import Sprite, SpriteList, gui
 import math
 from random import randint
+from views import *
 
 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+VIEWS = {
+    "window" : WINDOW,
+    "gameOver" : GameOverView
+}
 
-WINDOW = arcade.Window(SCREEN_WIDTH,SCREEN_HEIGHT)
+
+SCREEN_WIDTH = WINDOW.width
+SCREEN_HEIGHT = WINDOW.height
+
+
 
 
 
 SHIP_SPEED = 10
 
 PLAYER_LIVES = 3
+

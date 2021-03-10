@@ -2,7 +2,7 @@ from globals import *
 from meteors import Meteor
 from ship import Ship
 from views import GameOverView
-from client import *
+# from client import *
 
 
 class MenuView(arcade.View):
