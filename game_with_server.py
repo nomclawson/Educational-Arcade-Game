@@ -18,9 +18,11 @@ class MenuView(arcade.View):
 	def on_draw(self):
 		""" Draw the menu """
 		arcade.start_render()
-		arcade.draw_text("Math Game?", SCREEN_WIDTH/2, SCREEN_HEIGHT/2,
-						 arcade.color.WHITE, font_size=30, anchor_x="center")
-		arcade.draw_text("Click to advance", SCREEN_WIDTH/2, SCREEN_HEIGHT/2-75,
+		arcade.draw_text("3", SCREEN_WIDTH/2, SCREEN_HEIGHT/2-100,
+						 arcade.color.DARK_RED, font_size=200, anchor_x="center")
+		arcade.draw_text("Math   Blaster", SCREEN_WIDTH/2+15, SCREEN_HEIGHT/2,
+						 arcade.color.WHITE, font_size=60, anchor_x="center")
+		arcade.draw_text("Click to advance", SCREEN_WIDTH/2, SCREEN_HEIGHT/2-120,
                          arcade.color.WHITE, font_size=20, anchor_x="center")
 
 	def on_mouse_press(self, _x, _y, _button, _modifiers):
