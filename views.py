@@ -41,7 +41,7 @@ class GameOverView(arcade.View):
         
         if key == arcade.key.ESCAPE:
             #Send score to server
-            send(f"{self.score}")
+            send(f"{self.name}:{self.score}")
             arcade.close_window()
             
         if key == arcade.key.ENTER:
@@ -50,7 +50,7 @@ class GameOverView(arcade.View):
         if key == arcade.key.R:
             self.window.show_view(self.GameView())
             self.gui._ui_elements.remove(self.inputBox)
-            send(f"{self.score}")
+            send(f"{self.name}:{self.score}")
 
 
 
