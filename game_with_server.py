@@ -22,13 +22,18 @@ class MenuView(arcade.View):
 						 arcade.color.DARK_RED, font_size=200, anchor_x="center")
 		arcade.draw_text("Math   Blaster", SCREEN_WIDTH/2+15, SCREEN_HEIGHT/2,
 						 arcade.color.WHITE, font_size=60, anchor_x="center")
-		arcade.draw_text("Click to advance", SCREEN_WIDTH/2, SCREEN_HEIGHT/2-120,
+		arcade.draw_text("Click or Press any key to advance", SCREEN_WIDTH/2, SCREEN_HEIGHT/2-120,
                          arcade.color.WHITE, font_size=20, anchor_x="center")
 
 	def on_mouse_press(self, _x, _y, _button, _modifiers):
 		""" Use a mouse press to advance to the 'game' view. """
 		game_view = GameView() 
 		self.window.show_view(game_view)
+
+	def on_key_press(self, symbol, modifiers):
+		game_view = GameView() 
+		self.window.show_view(game_view)
+		return super().on_key_press(symbol, modifiers)
 
 class GameView(arcade.View):
 	def __init__(self):
@@ -224,7 +229,7 @@ class GameView(arcade.View):
 		:param key_modifiers: Things like shift, ctrl, etc
 		"""
 		#Wait for animations to be loaded before accepting user input
-		if(self.animationsLoaded):
+		if (self.animationsLoaded):
 			if key == arcade.key.LEFT or key == arcade.key.DOWN:
 				self.ship.move_left()
 				self._keys.add(key)
@@ -257,7 +262,7 @@ class GameView(arcade.View):
 		:param key_modifiers: Things like shift, ctrl, etc
 		"""
 		#The game is waiting  for animations to be loaded before accepting user input
-		if(self.animationsLoaded):
+		if (self.animationsLoaded) and len(self._keys) > 0:
 			if key == arcade.key.LEFT or key == arcade.key.DOWN:
 				self._keys.remove(key)
 
@@ -276,11 +281,6 @@ class GameView(arcade.View):
 		"""
 		laser = Laser(self.ship.center_x, self.ship.center_y)
 		self.bullets.append(laser)
-		# bullet = Sprite(filename="images/bullet.png", \
-		# 		center_x=self.ship.center_x, center_y=self.ship.center_y)
-		# bullet.change_y = 30
-		# bullet.scale = .15
-		# return bullet
 
 	def create_meteor(self):
 		"""
