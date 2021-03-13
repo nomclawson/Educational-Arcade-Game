@@ -73,5 +73,5 @@ class GameOverView(arcade.View):
             self.name = self.inputBox.text
 
     def send_score(self):
-        if self.score > 0:
+        if self.score > 0 and self.name != '' and ':' not in self.name:
             send(f"{self.name}:{self.score}")
