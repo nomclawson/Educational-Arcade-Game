@@ -13,7 +13,6 @@ class MenuView(arcade.View):
 
 	def on_show(self):
 		""" Called when switching to this view"""
-		#self.background = arcade.load_texture("images/starnight.jpeg")
 		arcade.set_background_color(arcade.color.BLACK)
 
 	def on_draw(self):
@@ -44,6 +43,8 @@ class GameView(arcade.View):
 		:param height: Screen height
 		"""
 		super().__init__()
+
+		self.background = arcade.load_texture("images/starnight.jpeg")
 
 		self._keys = set()
 
@@ -82,6 +83,7 @@ class GameView(arcade.View):
 
 		# clear the screen to begin drawing
 		arcade.start_render()
+		arcade.draw_lrwh_rectangle_textured(0,0, SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
 		self.reload_box.draw()
 		self.draw_score()
 		
