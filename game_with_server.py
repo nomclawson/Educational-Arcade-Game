@@ -13,7 +13,8 @@ class MenuView(arcade.View):
 
 	def on_show(self):
 		""" Called when switching to this view"""
-		arcade.set_background_color(arcade.color.ARSENIC)
+		#self.background = arcade.load_texture("images/starnight.jpeg")
+		arcade.set_background_color(arcade.color.BLACK)
 
 	def on_draw(self):
 		""" Draw the menu """
