@@ -3,7 +3,7 @@ from arcade import gui
 from meteors import Meteor
 from laser import Laser
 from ship import Ship
-from reload_box import ReloadBox
+from dashboard import Dashboard
 from explosion import Explosion
 from explosion import createExplosionTextureList
 from client import *
@@ -74,7 +74,7 @@ class GameView(arcade.View):
 		
 		self.window.set_mouse_visible(False)
 		#Objects
-		self.reload_box = ReloadBox()
+		self.reload_box = Dashboard()
 		self.ship = Ship()
 		self.bullets = SpriteList()
 		self.meteors = SpriteList()	
@@ -266,6 +266,11 @@ class GameView(arcade.View):
 				self.create_bullet()
 				# Gunshot sound
 				arcade.sound.play_sound(self.gun_sound)
+
+
+		if key == arcade.key.A or key == arcade.key.S or key == arcade.key.D or key == arcade.key.F:
+			# self.math.get_key(key)
+			pass
 
 		if key == arcade.key.S:
 			# User hits s. Flip between full and not full screen.

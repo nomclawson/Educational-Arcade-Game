@@ -1,7 +1,7 @@
 import arcade
 from arcade import Sprite, SpriteList, gui
 import math
-from random import randint
+from random import randint, choice
 
 
 
