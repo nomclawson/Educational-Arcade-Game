@@ -1,12 +1,29 @@
-from globals import *
+import arcade
+from arcade import gui
 from meteors import Meteor
-from ship import Ship
 from laser import Laser
-from explosion import Explosion
+from ship import Ship
 from reload_box import ReloadBox
+from explosion import Explosion
 from explosion import createExplosionTextureList
+from client import *
+from globals import *
 
+class MainWindow(arcade.Window):
+    """ Main application class. """
+    def __init__(self):
+        """
+        Initializer
+        """
+        # Open a window in full screen mode. Remove fullscreen=True if
+        # you don't want to start this way.
+        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, fullscreen=False)
 
+        # This will get the size of the window, and set the viewport to match.
+        # So if the window is 1000x1000, then so will our viewport. If
+        # you want something different, then use those coordinates instead.
+        width, height = self.get_size()
+        self.set_viewport(0, width, 0, height)
 
 class MenuView(arcade.View):
 	""" Class that manages the 'menu' view. """
@@ -22,7 +39,7 @@ class MenuView(arcade.View):
 						 arcade.color.DARK_RED, font_size=200, anchor_x="center")
 		arcade.draw_text("Math   Blaster", SCREEN_WIDTH/2+15, SCREEN_HEIGHT/2,
 						 arcade.color.WHITE, font_size=60, anchor_x="center")
-		arcade.draw_text("Click or Press any key to advance", SCREEN_WIDTH/2, SCREEN_HEIGHT/2-120,
+		arcade.draw_text("Click 'S' for full screen or any key to advance", SCREEN_WIDTH/2, SCREEN_HEIGHT/2-120,
                          arcade.color.WHITE, font_size=20, anchor_x="center")
 
 	def on_mouse_press(self, _x, _y, _button, _modifiers):
@@ -31,9 +48,17 @@ class MenuView(arcade.View):
 		self.window.show_view(game_view)
 
 	def on_key_press(self, symbol, modifiers):
-		game_view = GameView() 
-		self.window.show_view(game_view)
-		return super().on_key_press(symbol, modifiers)
+		if symbol == arcade.key.S:
+			# User hits s. Flip between full and not full screen.
+			self.window.set_fullscreen(not self.window.fullscreen)
+			# Instead of a one-to-one mapping, stretch/squash window to match the
+			# constants. This does NOT respect aspect ratio. You'd need to
+			# do a bit of math for that.
+			self.window.set_viewport(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT)
+		else:
+			game_view = GameView() 
+			self.window.show_view(game_view)
+			return super().on_key_press(symbol, modifiers)
 
 class GameView(arcade.View):
 	def __init__(self):
@@ -43,24 +68,16 @@ class GameView(arcade.View):
 		:param height: Screen height
 		"""
 		super().__init__()
-
 		self.background = arcade.load_texture("images/starnight.jpeg")
-
 		self._keys = set()
-
 		self.score = 0
-
-		self.reload_box = ReloadBox()
-
-		#Objects
-		self.ship = Ship()
-
+		
 		self.window.set_mouse_visible(False)
-
+		#Objects
+		self.reload_box = ReloadBox()
+		self.ship = Ship()
 		self.bullets = SpriteList()
-
 		self.meteors = SpriteList()	
-
 		self.animations = SpriteList()
 
 		#Explosion Frames
@@ -68,7 +85,6 @@ class GameView(arcade.View):
 		self.animationsLoaded = False
 		self.load_animantion_frames()
 		
-
 		# Load sounds. Sounds from kenney.nl
 		self.gun_sound = arcade.sound.load_sound(":resources:sounds/laser2.wav")
 		self.hit_sound = arcade.sound.load_sound(":resources:sounds/explosion2.wav")
@@ -80,27 +96,21 @@ class GameView(arcade.View):
 		Called automatically by the arcade framework.
 		Handles the responsiblity of drawing all elements.
 		"""
-
 		# clear the screen to begin drawing
 		arcade.start_render()
 		arcade.draw_lrwh_rectangle_textured(0,0, SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
 		self.reload_box.draw()
 		self.draw_score()
-		
-		for bullet in self.bullets:
-			bullet.draw()
-
-		for meteor in self.meteors:
-			meteor.draw()
-
+		self.bullets.draw()
+		self.meteors.draw()
+		#Check if the ship is still alive 
 		if(self.ship.alive):
 			self.ship.draw()
-		
+
+		#Render current animations
 		self.animations.draw()
 
-		
-
-		#Verify if animations have been loaded
+		#Verify if animations have been loaded else display a "get ready" message
 		if(not self.animationsLoaded):
 			self.draw_get_ready()
 
@@ -108,7 +118,6 @@ class GameView(arcade.View):
 		"""
 		Puts the current score on the screen
 		"""
-		
 		score_text = "Score: {}".format(self.score)
 		start_x = 10
 		start_y = SCREEN_HEIGHT - 20
@@ -121,7 +130,7 @@ class GameView(arcade.View):
 		"""
 		Writes a get ready message on the screen 
 		"""
-		arcade.draw_text("Get ready", SCREEN_WIDTH/2, SCREEN_HEIGHT/2,
+		arcade.draw_text("Get ready", ((SCREEN_WIDTH - RELOAD_BOX_WIDTH) /2 ) + RELOAD_BOX_WIDTH, SCREEN_HEIGHT/2,
 						arcade.color.WHITE, font_size=30, anchor_x="center")
 
 	def update(self, delta_time):
@@ -135,19 +144,23 @@ class GameView(arcade.View):
 		self.check_keys()
 		self.check_off_screen()
 		
-		for bullet in self.bullets:
-			bullet.update()
+		# for bullet in self.bullets:
+		# 	bullet.update()
+		self.bullets.update()
 
-		for meteor in self.meteors:
-			meteor.update()
+		# for meteor in self.meteors:
+		# 	meteor.update()
+
+		self.meteors.update()
 
 		if(self.animationsLoaded):
 			if randint(0,50) == 1:
 				self.create_meteor()
 
-		if ((self.ship.center_x > SCREEN_WIDTH and self.ship.change_x > 0) or \
-			(self.ship.center_x < 0 and self.ship.change_x < 0)):
-			self.ship.change_x = 0
+		# if ((self.ship.center_x > SCREEN_WIDTH and self.ship.change_x > 0) or \
+		# 	(self.ship.center_x < 0 and self.ship.change_x < 0)):
+		# 	self.ship.change_x = 0
+		self.ship.update()
 
 		self.check_collisions()
 
@@ -221,8 +234,10 @@ class GameView(arcade.View):
 		Checks to see if the user is holding down an
 		arrow key, and if so, takes appropriate action.
 		"""
-		if arcade.key.LEFT in self._keys or arcade.key.RIGHT in self._keys:
-			self.ship.update()
+		if arcade.key.LEFT in self._keys:
+			self.ship.move_left()
+		elif arcade.key.RIGHT in self._keys:
+			self.ship.move_right()
 
 	def on_key_press(self, key, key_modifiers):
 		"""
@@ -233,12 +248,12 @@ class GameView(arcade.View):
 		"""
 		#Wait for animations to be loaded before accepting user input
 		if (self.animationsLoaded):
-			if key == arcade.key.LEFT or key == arcade.key.DOWN:
-				self.ship.move_left()
+			if key == arcade.key.LEFT:
+				# self.ship.move_left()
 				self._keys.add(key)
 
-			if key == arcade.key.RIGHT or key == arcade.key.UP:
-				self.ship.move_right()
+			if key == arcade.key.RIGHT:
+				# self.ship.move_right()
 				self._keys.add(key)
 				
 			if key == arcade.key.B:
@@ -248,11 +263,17 @@ class GameView(arcade.View):
 				pass
 
 			if key == arcade.key.SPACE:
-				# bullet = self.create_bullet()
-				# self.bullets.append(bullet)
 				self.create_bullet()
 				# Gunshot sound
 				arcade.sound.play_sound(self.gun_sound)
+
+		if key == arcade.key.S:
+			# User hits s. Flip between full and not full screen.
+			self.window.set_fullscreen(not self.window.fullscreen)
+			# Instead of a one-to-one mapping, stretch/squash window to match the
+			# constants. This does NOT respect aspect ratio. You'd need to
+			# do a bit of math for that.
+			self.window.set_viewport(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT)
 
 		if key == arcade.key.ESCAPE:			
 			self.gameOver()
@@ -266,10 +287,10 @@ class GameView(arcade.View):
 		"""
 		#The game is waiting  for animations to be loaded before accepting user input
 		if (self.animationsLoaded) and len(self._keys) > 0:
-			if key == arcade.key.LEFT or key == arcade.key.DOWN:
+			if key == arcade.key.LEFT:
 				self._keys.remove(key)
 
-			if key == arcade.key.RIGHT or key == arcade.key.UP:
+			if key == arcade.key.RIGHT:
 				self._keys.remove(key)
 				
 			if key == arcade.key.W or key == arcade.key.D:
@@ -318,19 +339,84 @@ class GameView(arcade.View):
 		"""
 		Renders the GemeOverView and sends the score to the server
 		"""
-		self.window.show_view(VIEWS["gameOver"](GameView,self.score))
+		self.window.show_view(GameOverView(self.score))
 		#Send score to server
 		#send(f"{self.score}")
 
+class GameOverView(arcade.View):
+    """ Class that manages the 'game over' view. """
+    def __init__(self,score=0):
+        super().__init__()
+        self.window.set_mouse_visible(visible=True)
+        self.score = score
+        self.name = "Player"
+        self.gui = arcade.gui.UIManager()
+        self.inputBox = arcade.gui.UIInputBox(SCREEN_WIDTH//2,SCREEN_HEIGHT//3+90,200,30)
+        self.gui.add_ui_element(self.inputBox)
+        self.inputBox.render()
+        
+    def on_show(self):
+        """ Called when switching to this view"""
+        arcade.set_background_color(arcade.color.NEON_CARROT)
+        
+    def on_draw(self):
+        """ Draw the menu """
+        arcade.start_render()
 
+        arcade.draw_text(f"--GAME OVER--\n", SCREEN_WIDTH/2, SCREEN_HEIGHT/2+50,
+                         arcade.color.GRAY, font_size=60, anchor_x="center")
+        arcade.draw_text(f"Player: {self.name}\nScore: {self.score}", SCREEN_WIDTH/2, SCREEN_HEIGHT/2+40,
+                         arcade.color.BLACK, font_size=30, anchor_x="center")
 
-def main():
-	""" Main method """
+        if self.inputBox in self.gui._ui_elements:
+            arcade.draw_text(f" \nEnter Name:", SCREEN_WIDTH/2, SCREEN_HEIGHT//3+110,
+                            arcade.color.GRAY, font_size=30, anchor_x="center")
 
-	window = WINDOW
-	menu_view = MenuView()
-	window.show_view(menu_view)
-	arcade.run()
+            arcade.draw_text(f"Press Enter to submit name.", SCREEN_WIDTH/2, SCREEN_HEIGHT/3,
+                            arcade.color.WHITE, font_size=26, anchor_x="center")
+                        
+        arcade.draw_text(f"Press Esc to quit, F1 to restart.", SCREEN_WIDTH/2, SCREEN_HEIGHT/4,
+                         arcade.color.WHITE, font_size=26, anchor_x="center")           
 
-if __name__ == "__main__":
-	main()
+    def on_key_press(self, key, modifiers):
+        # Quit game with ESCAPE
+        if key == arcade.key.ESCAPE:
+            self.get_name()
+            #Send score to server
+            self.send_score()
+            arcade.close_window()
+        
+        # Submit Name with ENTER
+        if key == arcade.key.ENTER:
+            self.name = self.inputBox.text          
+            self.gui._ui_elements.remove(self.inputBox)
+
+        # Restart with F1
+        if key == arcade.key.F1:
+            self.get_name()
+            try:
+                self.gui._ui_elements.remove(self.inputBox)
+            except:
+                print("something happened")
+            self.window.show_view(self.GameView())
+            self.send_score()
+		#Change screen size
+        if key == arcade.key.S:
+			# User hits s. Flip between full and not full screen.
+            self.window.set_fullscreen(not self.window.fullscreen)
+			# Instead of a one-to-one mapping, stretch/squash window to match the
+			# constants. This does NOT respect aspect ratio. You'd need to
+			# do a bit of math for that.
+            self.window.set_viewport(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT)
+
+    def get_name(self):
+        if self.inputBox.text != "":
+            self.name = self.inputBox.text
+
+    def send_score(self):
+        if self.score > 0 and self.name != '' and ':' not in self.name:
+            send(f"{self.name}:{self.score}")
+
+def initializeGame():
+	window = MainWindow()
+	window.show_view(MenuView())

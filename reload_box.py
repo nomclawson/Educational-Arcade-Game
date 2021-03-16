@@ -4,7 +4,7 @@ class ReloadBox():
     def __init__(self):
         self.color = arcade.color.DARK_GRAY
         self.left = 0
-        self.right = SCREEN_WIDTH//4
+        self.right = RELOAD_BOX_WIDTH
         self.top = SCREEN_HEIGHT
         self.bottom = 0
     

@@ -2,23 +2,20 @@ import arcade
 from arcade import Sprite, SpriteList, gui
 import math
 from random import randint
-from views import *
-
-
-VIEWS = {
-    "window" : WINDOW,
-    "gameOver" : GameOverView
-}
-
-
-SCREEN_WIDTH = WINDOW.width
-SCREEN_HEIGHT = WINDOW.height
 
 
 
-
-
+SCREEN_WIDTH = 1000
+SCREEN_HEIGHT = 800
+RELOAD_BOX_WIDTH = SCREEN_WIDTH // 4
 SHIP_SPEED = 10
-
 PLAYER_LIVES = 3
+SCREEN_TITLE = 'Math game'
+SHIP_SCALE= .15
+LASER_SCALE = .5
+LASER_SPEED = 30
+METEOR_SCALE = .1
+SHOTING_AREA_PADDING_SIDE = 40
+SHOTING_AREA_PADDING_BOTTOM = 60
+
 
