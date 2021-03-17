@@ -1,1 +1,70 @@
-/var/www/cabin/asteroid/scores.html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dang Mang - Asteroid High Scores</title>
+    <link rel="shortcut icon" href="#">
+    <!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300&display=swap" rel="stylesheet">
+</head>
+<style>
+    body {
+        font-family: 'Roboto Mono';
+    }
+</style>
+
+<script type="text/javascript">
+    function readScores() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("scores").innerHTML =
+                    this.responseText;
+            }
+        };
+        xhttp.open("GET", "topten.txt", true)
+        xhttp.send();
+    };
+    readScores()
+	function readNameScores() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("scores").innerHTML =
+                    this.responseText;
+            }
+        };
+        xhttp.open("GET", "topten.txt", true)
+        xhttp.send();
+	};
+	function getUserTopScores(){
+		user = document.getElementById("user").value;
+		//document.getElementById("scores").innerHTML = user;
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("scores").innerHTML =
+                    this.responseText;
+            }
+        };
+		
+        xhttp.open("GET", `players/${user}.txt`, true)
+        xhttp.send()	
+	}
+    
+</script>
+
+<body>
+    <h1 id="title">asteroid game high scores // dang mang . xyz</h1>
+    <!-- <input type="button" value="Submit" onclick="readScores()"><br><br> -->
+	 <form>
+	 	<label for="user">Search by user:</label>
+  		<input type="text" id="user" name="user"><br><br>
+  		<button type="button" onclick="getUserTopScores()">aye yuh</button>
+	</form>
+	<br>
+	<h2>High Scores:</h2>
+    <div id="scores"></div>
+</html>
