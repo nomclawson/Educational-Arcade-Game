@@ -269,10 +269,10 @@ class GameView(arcade.View):
 
 
 		if key == arcade.key.A or key == arcade.key.S or key == arcade.key.D or key == arcade.key.F:
-			# self.math.get_key(key)
-			pass
+			self.reload_box.check_answer(key)
+			
 
-		if key == arcade.key.S:
+		if key == arcade.key.F1:
 			# User hits s. Flip between full and not full screen.
 			self.window.set_fullscreen(not self.window.fullscreen)
 			# Instead of a one-to-one mapping, stretch/squash window to match the
