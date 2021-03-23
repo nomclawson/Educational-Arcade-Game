@@ -11,16 +11,25 @@ class Dashboard:
         self.top = SCREEN_HEIGHT
         self.bottom = 0
         self.math = Math()
-        self.question = self.math.question
-        self.answer = self.math.answer
+        self.question = ""
+        self.answer = 0
+        
         self.keys = [arcade.key.A, arcade.key.S, arcade.key.D, arcade.key.F]
 
         self.answers = {arcade.key.A : 0, arcade.key.S : 0, arcade.key.D : 0, arcade.key.F : 0}
+        self.symbols = {arcade.key.A : "A", arcade.key.S : "S", arcade.key.D : "D", arcade.key.F : "F"}
+        self.get_question()
     
     def draw(self):
         arcade.draw_lrtb_rectangle_filled(self.left, self.right, self.top, self.bottom, self.color)
 
-        arcade.draw_text(f"{self.question}={self.answer}",self.left+(self.right//2), SCREEN_HEIGHT//2, arcade.color.AIR_FORCE_BLUE)
+        arcade.draw_text(f"{self.question} = ({self.answer})",self.left+15, SCREEN_HEIGHT//2+10, arcade.color.DARK_BLUE, font_size=30)
+        offset = 0
+        for key in self.answers:
+            value = self.answers[key]
+            symbol = self.symbols[key]
+            offset -= 30
+            arcade.draw_text(f"{symbol}) {value}",self.left+30, SCREEN_HEIGHT//2+offset, arcade.color.DARK_BLUE, font_size=24)
         
     def check_answer(self, key):
         correct = self.answers[key] == self.answer
@@ -28,14 +37,19 @@ class Dashboard:
         return correct
 
     def get_question(self):
+        # get new question and answer
         self.question = self.math.question
         self.answer = self.math.answer
-        correct = choice(self.keys)
-        self.answers[correct] = self.answer
+
+        # randomly choose one key to be correct answer
+        correct_key = choice(self.keys)
+        self.answers[correct_key] = self.answer
         for key in self.answers:
-            if key != correct:
+            if self.answers[key] != self.answer:
                 false_answer = randint(0,100)
-                self.answers[correct] = false_answer
+                self.answers[key] = false_answer
+        print(self.answers)
+        print(self.question, self.answer)
 
 
 class Math:
