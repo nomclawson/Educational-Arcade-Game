@@ -403,7 +403,7 @@ class GameOverView(arcade.View):
                 self.gui._ui_elements.remove(self.inputBox)
             except:
                 print("something happened")
-            self.window.show_view(self.GameView())
+            self.window.show_view(GameView())
             self.send_score()
 		#Change screen size
         if key == arcade.key.S:
