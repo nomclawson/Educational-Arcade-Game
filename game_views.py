@@ -71,12 +71,20 @@ class GameView(arcade.View):
 		self.background = arcade.load_texture("images/starnight.jpeg")
 		self._keys = set()
 		self.score = 0
+		self.lives = PLAYER_LIVES
+
+		self.delay = START_DELAY
 		
 		self.window.set_mouse_visible(False)
 		#Objects
 		self.reload_box = Dashboard()
 		self.ship = Ship()
+
+		# bullet Sprites
 		self.bullets = SpriteList()
+		# how many bullets you're allowed to make
+		self.ammo = 5
+
 		self.meteors = SpriteList()	
 		self.animations = SpriteList()
 
@@ -118,13 +126,16 @@ class GameView(arcade.View):
 		"""
 		Puts the current score on the screen
 		"""
-		score_text = "Score: {}".format(self.score)
-		start_x = 10
-		start_y = SCREEN_HEIGHT - 20
+		score_text = f"Score: {self.score}\nAmmo: {self.ammo}\nLives: {self.lives}"
+		start_x = 20
+		start_y = SCREEN_HEIGHT - 140
 		
-		arcade.draw_rectangle_filled(50, start_y + 5,90,20,(0,0,0,150))
+		arcade.draw_rectangle_filled(self.reload_box.right//2,SCREEN_HEIGHT - 70,self.reload_box.right,140,(0,0,0,150))
 		arcade.draw_text(score_text, start_x=start_x, start_y=start_y,
-						 font_size=12, color=arcade.color.WHITE)
+						 font_size=30, color=arcade.color.WHITE)
+
+		# text = f"Ammo: {self.ammo}"
+		# arcade.draw_text(text, self.reload_box.left, SCREEN_HEIGHT - (SCREEN_HEIGHT//4), font_size=30, color=arcade.color.WHITE)
 			
 	def draw_get_ready(self):
 		"""
@@ -154,7 +165,7 @@ class GameView(arcade.View):
 		self.meteors.update()
 
 		if(self.animationsLoaded):
-			if randint(0,50) == 1:
+			if randint(0,self.delay) == 1:
 				self.create_meteor()
 
 		# if ((self.ship.center_x > SCREEN_WIDTH and self.ship.change_x > 0) or \
@@ -202,7 +213,12 @@ class GameView(arcade.View):
 
 			#Check if a meteor crossed the bottom screen
 			elif meteor.bottom <= 0:
-				self.gameOver()
+				self.create_explosion( meteor.center_x, meteor.center_y)
+				arcade.sound.play_sound(self.hit_sound)
+				self.lives -= 1
+				meteor.alive = False
+				if self.lives <= 0:
+					self.gameOver()
 
 		#Check if a bullet collided with a meteor
 		for bullet in self.bullets:
@@ -256,20 +272,24 @@ class GameView(arcade.View):
 				# self.ship.move_right()
 				self._keys.add(key)
 				
-			if key == arcade.key.B:
-				print(self.bullets)
-				
 			if key == arcade.key.S or key == arcade.key.A:
 				pass
 
 			if key == arcade.key.SPACE:
 				self.create_bullet()
 				# Gunshot sound
-				arcade.sound.play_sound(self.gun_sound)
 
-
+		
 		if key == arcade.key.A or key == arcade.key.S or key == arcade.key.D or key == arcade.key.F:
-			self.reload_box.check_answer(key)
+			
+			if self.reload_box.check_answer(key):
+				self.reload()
+				# !!!!!!!!!!!!!
+				# TODO: Add display for right/wrong answer and its consequences
+				# !!!!!!!!!!!!!
+			else:
+				self.lives -= 1
+				
 			
 
 		if key == arcade.key.F1:
@@ -282,6 +302,8 @@ class GameView(arcade.View):
 
 		if key == arcade.key.ESCAPE:			
 			self.gameOver()
+
+		
 
 	def on_key_release(self, key, key_modifiers):
 		"""
@@ -308,8 +330,17 @@ class GameView(arcade.View):
 		"""
 		Creates an instance of laser and appends it to the bullets sprite list
 		"""
-		laser = Laser(self.ship.center_x, self.ship.center_y)
-		self.bullets.append(laser)
+
+		if self.ammo > 0:
+			laser = Laser(self.ship.center_x, self.ship.center_y)
+			self.bullets.append(laser)
+			arcade.sound.play_sound(self.gun_sound)
+			self.ammo -=1
+
+	def reload(self):
+		self.ammo += 5
+		
+
 
 	def create_meteor(self):
 		"""
