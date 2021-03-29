@@ -34,7 +34,12 @@ class Dashboard:
         self.get_question()
         # print(correct)
         return correct
-
+    
+    def fake_answer(self, answer):
+        false_answer = randint(answer - int(answer * 0.5), answer + int(answer * .5))
+        if false_answer not in self.answers:
+            return false_answer
+                
     def get_question(self):
         # get new question and answer
         self.question = self.math.question
@@ -45,12 +50,14 @@ class Dashboard:
         self.answers[correct_key] = self.answer
         for key in self.answers:
             if self.answers[key] != self.answer:
-                false_answer = randint(0,100)
+                # false_answer = randint(0,100)
+                false_answer = self.fake_answer(self.answer)
                 self.answers[key] = false_answer
         # print(self.answers)
         # print(self.question, self.answer)
 
 
+    
 class Math:
     def __init__(self):
         #self._question = ""
