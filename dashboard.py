@@ -36,9 +36,16 @@ class Dashboard:
         return correct
     
     def fake_answer(self, answer):
-        false_answer = randint(answer - int(answer * 0.5), answer + int(answer * .5))
-        if false_answer not in self.answers:
-            return false_answer
+        # print(answer) -3 - (-3*.5), -3 + (-3*.5)
+        if answer > 0:
+            false_answer = randint(answer - int(answer * 0.5), answer + int(answer * .5))
+        else:
+            false_answer = randint(answer + int(answer * 0.5), answer - int(answer * .5))        
+        while false_answer in list(self.answers.values()) or false_answer == answer:
+            false_answer += randint(1,5)
+        
+        return false_answer
+        
                 
     def get_question(self):
         # get new question and answer
@@ -51,8 +58,12 @@ class Dashboard:
         for key in self.answers:
             if self.answers[key] != self.answer:
                 # false_answer = randint(0,100)
+                # false_answer = self.answer
+                # while false_answer in self.answers.values():
                 false_answer = self.fake_answer(self.answer)
+                
                 self.answers[key] = false_answer
+                print()
         # print(self.answers)
         # print(self.question, self.answer)
 

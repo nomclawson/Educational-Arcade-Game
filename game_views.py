@@ -10,20 +10,20 @@ from client import *
 from globals import *
 
 class MainWindow(arcade.Window):
-    """ Main application class. """
-    def __init__(self):
-        """
-        Initializer
-        """
-        # Open a window in full screen mode. Remove fullscreen=True if
-        # you don't want to start this way.
-        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, fullscreen=False)
+	""" Main application class. """
+	def __init__(self):
+		"""
+		Initializer
+		"""
+		# Open a window in full screen mode. Remove fullscreen=True if
+		# you don't want to start this way.
+		super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, fullscreen=False)
 
-        # This will get the size of the window, and set the viewport to match.
-        # So if the window is 1000x1000, then so will our viewport. If
-        # you want something different, then use those coordinates instead.
-        width, height = self.get_size()
-        self.set_viewport(0, width, 0, height)
+		# This will get the size of the window, and set the viewport to match.
+		# So if the window is 1000x1000, then so will our viewport. If
+		# you want something different, then use those coordinates instead.
+		width, height = self.get_size()
+		self.set_viewport(0, width, 0, height)
 
 class MenuView(arcade.View):
 	""" Class that manages the 'menu' view. """
@@ -40,7 +40,7 @@ class MenuView(arcade.View):
 		arcade.draw_text("Math   Blaster", SCREEN_WIDTH/2+15, SCREEN_HEIGHT/2,
 						 arcade.color.WHITE, font_size=60, anchor_x="center")
 		arcade.draw_text("Click 'F1' for full screen or any key to advance", SCREEN_WIDTH/2, SCREEN_HEIGHT/2-120,
-                         arcade.color.WHITE, font_size=20, anchor_x="center")
+						 arcade.color.WHITE, font_size=20, anchor_x="center")
 
 	def on_mouse_press(self, _x, _y, _button, _modifiers):
 		""" Use a mouse press to advance to the 'game' view. """
@@ -48,7 +48,7 @@ class MenuView(arcade.View):
 		self.window.show_view(game_view)
 
 	def on_key_press(self, symbol, modifiers):
-		if symbol == arcade.key.S:
+		if symbol == arcade.key.F1:
 			# User hits s. Flip between full and not full screen.
 			self.window.set_fullscreen(not self.window.fullscreen)
 			# Instead of a one-to-one mapping, stretch/squash window to match the
@@ -381,78 +381,81 @@ class GameView(arcade.View):
 		#send(f"{self.score}")
 
 class GameOverView(arcade.View):
-    """ Class that manages the 'game over' view. """
-    def __init__(self,score=0):
-        super().__init__()
-        self.window.set_mouse_visible(visible=True)
-        self.score = score
-        self.name = "Player"
-        self.gui = arcade.gui.UIManager()
-        self.inputBox = arcade.gui.UIInputBox(SCREEN_WIDTH//2,SCREEN_HEIGHT//3+90,200,30)
-        self.gui.add_ui_element(self.inputBox)
-        self.inputBox.render()
-        
-    def on_show(self):
-        """ Called when switching to this view"""
-        arcade.set_background_color(arcade.color.NEON_CARROT)
-        
-    def on_draw(self):
-        """ Draw the menu """
-        arcade.start_render()
+	""" Class that manages the 'game over' view. """
+	def __init__(self,score=0):
+		super().__init__()
+		self.window.set_mouse_visible(visible=True)
+		self.score = score
+		self.name = "Player"
+		self.gui = arcade.gui.UIManager(self.window)
+		
+		self.inputBox = arcade.gui.UIInputBox(self.window.width//2,self.window.height//2,200,30)
+		self.gui.add_ui_element(self.inputBox)
+		self.inputBox.render()
+		
+	def on_show(self):
+		""" Called when switching to this view"""
+		arcade.set_background_color(arcade.color.NEON_CARROT)
+		
+	def on_draw(self):
+		""" Draw the menu """
+		arcade.start_render()
 
-        arcade.draw_text(f"--GAME OVER--\n", SCREEN_WIDTH/2, SCREEN_HEIGHT/2+50,
-                         arcade.color.GRAY, font_size=60, anchor_x="center")
-        arcade.draw_text(f"Player: {self.name}\nScore: {self.score}", SCREEN_WIDTH/2, SCREEN_HEIGHT/2+40,
-                         arcade.color.BLACK, font_size=30, anchor_x="center")
+		arcade.draw_text(f"--GAME OVER--\n", SCREEN_WIDTH/2, SCREEN_HEIGHT/2+50,
+						 arcade.color.GRAY, font_size=60, anchor_x="center")
+		arcade.draw_text(f"Player: {self.name}\nScore: {self.score}", SCREEN_WIDTH/2, SCREEN_HEIGHT/2+40,
+						 arcade.color.BLACK, font_size=30, anchor_x="center")
 
-        if self.inputBox in self.gui._ui_elements:
-            arcade.draw_text(f" \nEnter Name:", SCREEN_WIDTH/2, SCREEN_HEIGHT//3+110,
-                            arcade.color.GRAY, font_size=30, anchor_x="center")
+		if self.inputBox in self.gui._ui_elements:
+			arcade.draw_text(f" \nEnter Name:", SCREEN_WIDTH/2, SCREEN_HEIGHT//3+110,
+							arcade.color.GRAY, font_size=30, anchor_x="center")
 
-            arcade.draw_text(f"Press Enter to submit name.", SCREEN_WIDTH/2, SCREEN_HEIGHT/3,
-                            arcade.color.WHITE, font_size=26, anchor_x="center")
-                        
-        arcade.draw_text(f"Press Esc to quit, F1 to restart.", SCREEN_WIDTH/2, SCREEN_HEIGHT/4,
-                         arcade.color.WHITE, font_size=26, anchor_x="center")           
+			arcade.draw_text(f"Press Enter to submit name.", SCREEN_WIDTH/2, SCREEN_HEIGHT/3,
+							arcade.color.WHITE, font_size=26, anchor_x="center")
+						
+		arcade.draw_text(f"Press Esc to quit, F2 to restart.", SCREEN_WIDTH/2, SCREEN_HEIGHT/4,
+						 arcade.color.WHITE, font_size=26, anchor_x="center")           
 
-    def on_key_press(self, key, modifiers):
-        # Quit game with ESCAPE
-        if key == arcade.key.ESCAPE:
-            self.get_name()
-            #Send score to server
-            self.send_score()
-            arcade.close_window()
-        
-        # Submit Name with ENTER
-        if key == arcade.key.ENTER:
-            self.name = self.inputBox.text          
-            self.gui._ui_elements.remove(self.inputBox)
+	def on_key_press(self, key, modifiers):
+		# Quit game with ESCAPE
+		if key == arcade.key.ESCAPE:
+			self.get_name()
+			#Send score to server
+			self.send_score()
+			arcade.close_window()
+		
+		# Submit Name with ENTER
+		if key == arcade.key.ENTER:
+			self.name = self.inputBox.text          
+			self.gui._ui_elements.remove(self.inputBox)
 
-        # Restart with F1
-        if key == arcade.key.F1:
-            self.get_name()
-            try:
-                self.gui._ui_elements.remove(self.inputBox)
-            except:
-                print("something happened")
-            self.window.show_view(GameView())
-            self.send_score()
-		#Change screen size
-        if key == arcade.key.S:
+		# Restart with F2
+		if key == arcade.key.F2:
+			self.get_name()
+			try:
+				self.gui._ui_elements.remove(self.inputBox)
+			except:
+				print("something happened")
+			self.window.show_view(GameView())
+			self.send_score()
+		# Change screen size
+		if key == arcade.key.F1:
 			# User hits s. Flip between full and not full screen.
-            self.window.set_fullscreen(not self.window.fullscreen)
+			self.window.set_fullscreen(not self.window.fullscreen)
 			# Instead of a one-to-one mapping, stretch/squash window to match the
 			# constants. This does NOT respect aspect ratio. You'd need to
 			# do a bit of math for that.
-            self.window.set_viewport(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT)
 
-    def get_name(self):
-        if self.inputBox.text != "":
-            self.name = self.inputBox.text
+			
+			self.window.set_viewport(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT)
 
-    def send_score(self):
-        if self.score > 0 and self.name != '' and ':' not in self.name:
-            send(f"{self.name}:{self.score}")
+	def get_name(self):
+		if self.inputBox.text != "":
+			self.name = self.inputBox.text
+
+	def send_score(self):
+		if self.score > 0 and self.name != '' and ':' not in self.name:
+			send(f"{self.name}:{self.score}")
 
 def initializeGame():
 	window = MainWindow()

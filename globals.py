@@ -5,8 +5,8 @@ from random import randint, choice
 
 
 
-SCREEN_WIDTH = 1000
-SCREEN_HEIGHT = 800
+SCREEN_WIDTH = 1024
+SCREEN_HEIGHT = 576
 RELOAD_BOX_WIDTH = SCREEN_WIDTH // 4
 SHIP_SPEED = 10
 START_DELAY = 120 # 1 in 120 chance per frame * 60 frames per second =~ 1 asteroid per 2 second, I think
