@@ -39,7 +39,7 @@ class MenuView(arcade.View):
 						 arcade.color.DARK_RED, font_size=200, anchor_x="center")
 		arcade.draw_text("Math   Blaster", SCREEN_WIDTH/2+15, SCREEN_HEIGHT/2,
 						 arcade.color.WHITE, font_size=60, anchor_x="center")
-		arcade.draw_text("Click 'S' for full screen or any key to advance", SCREEN_WIDTH/2, SCREEN_HEIGHT/2-120,
+		arcade.draw_text("Click 'F1' for full screen or any key to advance", SCREEN_WIDTH/2, SCREEN_HEIGHT/2-120,
                          arcade.color.WHITE, font_size=20, anchor_x="center")
 
 	def on_mouse_press(self, _x, _y, _button, _modifiers):
@@ -126,16 +126,17 @@ class GameView(arcade.View):
 		"""
 		Puts the current score on the screen
 		"""
-		score_text = f"Score: {self.score}\nAmmo: {self.ammo}\nLives: {self.lives}"
+		score_text = f"Score: {self.score}\nLives: {self.lives}"
 		start_x = 20
-		start_y = SCREEN_HEIGHT - 140
+		start_y = SCREEN_HEIGHT - 100
 		
 		arcade.draw_rectangle_filled(self.reload_box.right//2,SCREEN_HEIGHT - 70,self.reload_box.right,140,(0,0,0,150))
 		arcade.draw_text(score_text, start_x=start_x, start_y=start_y,
 						 font_size=30, color=arcade.color.WHITE)
 
-		# text = f"Ammo: {self.ammo}"
-		# arcade.draw_text(text, self.reload_box.left, SCREEN_HEIGHT - (SCREEN_HEIGHT//4), font_size=30, color=arcade.color.WHITE)
+		text = f"Ammo: {self.ammo}"
+		arcade.draw_rectangle_filled(self.reload_box.right//2,SCREEN_HEIGHT - 705,self.reload_box.right,80,(0,0,0,150))
+		arcade.draw_text(text, self.reload_box.left, SCREEN_HEIGHT - (SCREEN_HEIGHT//1.10), font_size=30, color=arcade.color.WHITE)
 			
 	def draw_get_ready(self):
 		"""
