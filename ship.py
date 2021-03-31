@@ -5,8 +5,9 @@ class Ship(Sprite):
     Ship class
     """
     def __init__(self ):
-        super().__init__(filename="images/star-shooter.png")
-        self.center_x = (SCREEN_WIDTH - RELOAD_BOX_WIDTH) // 2 + RELOAD_BOX_WIDTH
+        # super().__init__(filename="images/star-shooter.png")
+        super().__init__(filename="images/ship2.png")
+        self.center_x = (SCREEN_WIDTH - DASHBOARD_WIDTH) // 2 + DASHBOARD_WIDTH
         self.center_y = SHOTING_AREA_PADDING_BOTTOM
         self.scale = SHIP_SCALE
         self.alive = True
@@ -14,7 +15,7 @@ class Ship(Sprite):
 
     def move_left(self):
         #Check if the ship can move left
-        if (self.center_x > RELOAD_BOX_WIDTH + SHOTING_AREA_PADDING_SIDE):
+        if (self.center_x > DASHBOARD_WIDTH + SHOTING_AREA_PADDING_SIDE):
             self.center_x = self.center_x - SHIP_SPEED
 
     def move_right(self):

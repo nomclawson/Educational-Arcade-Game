@@ -21,70 +21,23 @@ class Gui(arcade.gui.UIManager):
 		# Open a window in full screen mode. Remove fullscreen=True if
 		# you don't want to start this way.
 		super().__init__(window)
-
-	def on_ui_event(self, event: UIEvent):
-		"""
-		Processes UIEvents, forward events to added elements and manages focused and hovered elements
-		"""
-		print('this is happening')
-		super().on_ui_event(event)
-		#Get the ratio of the screen when it resizes to better track events on different screen sizes
-		# ratio_x = 1
-		# ratio_y = 1
-		# width, height = self.window.get_size()
-		# print('At least this is happening')
-		# if(SCREEN_HEIGHT != height):
-		# 	print('This should happen')
-		# 	ratio_y = height / SCREEN_HEIGHT
-		# if(SCREEN_WIDTH != width):
-		# 	print('This should happen too')
-		# 	ratio_x = width / SCREEN_WIDTH
-
-		# eventX = event.get('x') * ratio_x
-		# eventY = event.get('y') * ratio_y
-
-
-		# for ui_element in list(self._ui_elements):
-		# 	ui_element = cast(UIElement, ui_element)
-
-		# 	if event.type == MOUSE_PRESS:
-		# 		if ui_element.collides_with_point((eventX, eventY)):
-		# 			self.focused_element = ui_element
-
-		# 		elif ui_element is self.focused_element:
-		# 			# TODO does this work like expected?
-		# 			self.focused_element = None
-
-		# 	if event.type == MOUSE_MOTION:
-		# 		if ui_element.collides_with_point((eventX, eventY)):
-		# 			self.hovered_element = ui_element
-
-		# 		elif ui_element is self.hovered_element:
-		# 			self.hovered_element = None
-
-		# 	ui_element.on_ui_event(event)
-		print('on_ui_event was triggered')
-
+		
 	def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
 		"""
 		Dispatches :py:meth:`arcade.View.on_mouse_press()` as :py:class:`arcade.gui.UIElement`
 		with type :py:attr:`arcade.gui.MOUSE_PRESS`
 		"""
-		print('Clicking the mouse')
 		#Get the ratio of the screen when it resizes to better track events on different screen sizes
 		ratio_x = 1
 		ratio_y = 1
 		width, height = self.window.get_size()
-		print('At least this is happening')
 		if(SCREEN_HEIGHT != height):
-			print('This should happen')
 			ratio_y = height / SCREEN_HEIGHT
 		if(SCREEN_WIDTH != width):
-			print('This should happen too')
 			ratio_x = width / SCREEN_WIDTH
 
-		eventX = x * ratio_x
-		eventY = y * ratio_y
+		eventX = x / ratio_x
+		eventY = y / ratio_y
 		self.dispatch_ui_event(UIEvent(MOUSE_PRESS, x=eventX, y=eventY, button=button, modifiers=modifiers))
 
 	def on_mouse_motion(self, x: float, y: float, dx: float, dy: float):
@@ -92,28 +45,18 @@ class Gui(arcade.gui.UIManager):
 		Dispatches :py:meth:`arcade.View.on_mouse_motion()` as :py:class:`arcade.gui.UIElement`
 		with type :py:attr:`arcade.gui.MOUSE_MOTION`
 		"""
-		print('moving the mouse')
 		#Get the ratio of the screen when it resizes to better track events on different screen sizes
 		ratio_x = 1
 		ratio_y = 1
 		width, height = self.window.get_size()
-		print('At least this is happening')
 		if(SCREEN_HEIGHT != height):
-			print('This should happen')
 			ratio_y = height / SCREEN_HEIGHT
 		if(SCREEN_WIDTH != width):
-			print('This should happen too')
 			ratio_x = width / SCREEN_WIDTH
 
-		eventX = x * ratio_x
-		eventY = y * ratio_y
+		eventX = x / ratio_x
+		eventY = y / ratio_y
 		self.dispatch_ui_event(UIEvent(MOUSE_MOTION, x=eventX, y=eventY, dx=dx, dy=dy))
-
-	def on_resize(self, width, height):
-			"""
-			Callback triggered on window resize
-			"""
-			print("Screen is changing")
 
 class MainWindow(arcade.Window):
 	""" Main application class. """
@@ -183,8 +126,8 @@ class GameView(arcade.View):
 		:param height: Screen height
 		"""
 		super().__init__()
-		self.background = arcade.load_texture("images/starnight.jpeg")
-		# self.background = arcade.load_texture("images/space2.jpeg")
+		# self.background = arcade.load_texture("images/starnight.jpeg")
+		self.background = arcade.load_texture("images/space1.jpeg")
 		self._keys = set()
 		self.score = 0
 		self.lives = PLAYER_LIVES
@@ -193,7 +136,7 @@ class GameView(arcade.View):
 		
 		self.window.set_mouse_visible(False)
 		#Objects
-		self.reload_box = Dashboard()
+		self.dashboard = Dashboard()
 		self.ship = Ship()
 
 		# bullet Sprites
@@ -203,6 +146,7 @@ class GameView(arcade.View):
 
 		self.meteors = SpriteList()	
 		self.animations = SpriteList()
+		self.lifeList = SpriteList()
 
 		#Explosion Frames
 		self.explosion_texture_list =  createExplosionTextureList()
@@ -215,6 +159,19 @@ class GameView(arcade.View):
 
 		arcade.set_background_color(arcade.color.ARSENIC)
 
+		#This is for the lives 
+		start_x = 20
+		x = 0
+		start_y = SCREEN_HEIGHT - 125
+		for life in range(self.lives):
+			heart = Sprite('images/heart.png')
+			heart.scale = 0.1
+			x =  start_x + (life * (heart.width / 2) + 10)
+			heart.center_x = x
+			heart.center_y = start_y
+			
+			self.lifeList.append(heart)
+
 	def on_draw(self):
 		"""
 		Called automatically by the arcade framework.
@@ -223,7 +180,7 @@ class GameView(arcade.View):
 		# clear the screen to begin drawing
 		arcade.start_render()
 		arcade.draw_lrwh_rectangle_textured(0,0, SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
-		self.reload_box.draw()
+		self.dashboard.draw()
 		self.draw_score()
 		self.bullets.draw()
 		self.meteors.draw()
@@ -238,30 +195,35 @@ class GameView(arcade.View):
 		if(not self.animationsLoaded):
 			self.draw_get_ready()
 
+
+		self.lifeList.draw()
+
+		
+
 	def draw_score(self):
 		"""
 		Puts the current score on the screen
 		"""
-		score_text = f"Score: {self.score}\nLives: {self.lives}"
+		score_text = f"Score: {self.score}"
 		start_x = 20
 		start_y = SCREEN_HEIGHT - 100
 		
-		# arcade.draw_rectangle_filled(self.reload_box.right//2,SCREEN_HEIGHT - 70,self.reload_box.right,140,(0,0,0,150))
-		arcade.draw_rectangle_filled(self.reload_box.right//2,SCREEN_HEIGHT - 70,self.reload_box.right + 1,140,arcade.color.DARK_MIDNIGHT_BLUE)
+		# arcade.draw_rectangle_filled(self.dashboard.right//2,SCREEN_HEIGHT - 70,self.dashboard.right,140,(0,0,0,150))
+		arcade.draw_rectangle_filled(self.dashboard.right//2,SCREEN_HEIGHT - 70,self.dashboard.right + 1,140,arcade.color.DARK_MIDNIGHT_BLUE)
 		arcade.draw_text(score_text, start_x=start_x, start_y=start_y,
 						 font_size=30, color=arcade.color.WHITE)
 
 		text = f"Ammo: {self.ammo}"
-		# arcade.draw_rectangle_filled(self.reload_box.right//2,SCREEN_HEIGHT - 705,self.reload_box.right,80,(0,0,0,150))
-		# arcade.draw_text(text, self.reload_box.left, SCREEN_HEIGHT - (SCREEN_HEIGHT//1.10), font_size=30, color=arcade.color.WHITE)
+		# arcade.draw_rectangle_filled(self.dashboard.right//2,SCREEN_HEIGHT - 705,self.dashboard.right,80,(0,0,0,150))
+		# arcade.draw_text(text, self.dashboard.left, SCREEN_HEIGHT - (SCREEN_HEIGHT//1.10), font_size=30, color=arcade.color.WHITE)
 		arcade.draw_text(text, start_x, SCREEN_HEIGHT - (SCREEN_HEIGHT//1.10), font_size=30, color=arcade.color.WHITE)
 			
 	def draw_get_ready(self):
 		"""
 		Writes a get ready message on the screen 
 		"""
-		arcade.draw_text("Get ready", ((SCREEN_WIDTH - RELOAD_BOX_WIDTH) /2 ) + RELOAD_BOX_WIDTH, SCREEN_HEIGHT/2,
-						arcade.color.BLACK, font_size=30, anchor_x="center")
+		arcade.draw_text("Get ready", ((SCREEN_WIDTH - DASHBOARD_WIDTH) /2 ) + DASHBOARD_WIDTH, SCREEN_HEIGHT/2,
+						arcade.color.WHITE, font_size=30, anchor_x="center")
 
 	def update(self, delta_time):
 		"""
@@ -327,6 +289,7 @@ class GameView(arcade.View):
 				self.create_explosion( meteor.center_x, meteor.center_y)
 				arcade.sound.play_sound(self.hit_sound)
 				self.lives -= 1
+				self.lifeList.remove(self.lifeList[-1])
 				meteor.alive = False
 				if self.lives <= 0:
 					self.gameOver()
@@ -382,9 +345,6 @@ class GameView(arcade.View):
 			if key == arcade.key.RIGHT:
 				# self.ship.move_right()
 				self._keys.add(key)
-				
-			if key == arcade.key.S or key == arcade.key.A:
-				pass
 
 			if key == arcade.key.SPACE:
 				self.create_bullet()
@@ -393,13 +353,19 @@ class GameView(arcade.View):
 		
 		if key == arcade.key.A or key == arcade.key.S or key == arcade.key.D or key == arcade.key.F:
 			
-			if self.reload_box.check_answer(key):
+			if self.dashboard.check_answer(key):
+
 				self.reload()
 				# !!!!!!!!!!!!!
 				# TODO: Add display for right/wrong answer and its consequences
 				# !!!!!!!!!!!!!
 			else:
 				self.lives -= 1
+				self.lifeList.remove(self.lifeList[-1])
+				if self.lives <= 0:
+					self.gameOver()
+
+
 				
 			
 
@@ -494,7 +460,7 @@ class GameOverView(arcade.View):
 	""" Class that manages the 'game over' view. """
 	def __init__(self,score=0):
 		super().__init__()
-		self.background = arcade.load_texture("images/space1.jpeg")
+		self.background = arcade.load_texture("images/space2.jpeg")
 		self.window.set_mouse_visible(visible=True)
 		self.score = score
 		self.name = "Player"
@@ -505,11 +471,6 @@ class GameOverView(arcade.View):
 		self.inputBox = arcade.gui.UIInputBox(SCREEN_WIDTH // 2 ,SCREEN_HEIGHT // 2 - 25,200,30)
 		self.gui.add_ui_element(self.inputBox)
 
-		
-	# def on_show(self):
-	# 	""" Called when switching to this view"""
-	# 	arcade.set_background_color(arcade.color.NEON_CARROT)
-	# 	pass
 		
 	def on_draw(self):
 		""" Draw the menu """
@@ -565,12 +526,7 @@ class GameOverView(arcade.View):
 			# constants. This does NOT respect aspect ratio. You'd need to
 			# do a bit of math for that.
 			self.window.set_viewport(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT)
-			# width, height = self.window.get_size()
-			# self.gui._ui_elements[0].center_x = width // 2
-			# self.gui._ui_elements[0].center_y = height // 2 - 25
-			# self.inputBox = arcade.gui.UIInputBox(width // 2 ,height // 2 - 25,200,30)
-			# self.inputBox.render()
-			# self.gui.add_ui_element(self.inputBox)
+
 			
 
 	def get_name(self):
