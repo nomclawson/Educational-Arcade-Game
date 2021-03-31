@@ -27,20 +27,29 @@ class MainWindow(arcade.Window):
 
 class MenuView(arcade.View):
 	""" Class that manages the 'menu' view. """
+	def __init__(self):
+		super().__init__()
+		self.background = arcade.load_texture("images/space.jpeg")
 
-	def on_show(self):
-		""" Called when switching to this view"""
-		arcade.set_background_color(arcade.color.BLACK)
+	# def on_show(self):
+	# 	""" Called when switching to this view"""
+	# 	arcade.set_background_color(arcade.color.BLACK)
+	# 	pass
 
 	def on_draw(self):
 		""" Draw the menu """
 		arcade.start_render()
+
+		# Draw the background texture
+		arcade.draw_lrwh_rectangle_textured(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
+
 		arcade.draw_text("3", SCREEN_WIDTH/2, SCREEN_HEIGHT/2-100,
 						 arcade.color.DARK_RED, font_size=200, anchor_x="center")
 		arcade.draw_text("Math   Blaster", SCREEN_WIDTH/2+15, SCREEN_HEIGHT/2,
 						 arcade.color.WHITE, font_size=60, anchor_x="center")
 		arcade.draw_text("Click 'F1' for full screen or any key to advance", SCREEN_WIDTH/2, SCREEN_HEIGHT/2-120,
 						 arcade.color.WHITE, font_size=20, anchor_x="center")
+		
 
 	def on_mouse_press(self, _x, _y, _button, _modifiers):
 		""" Use a mouse press to advance to the 'game' view. """
@@ -68,7 +77,8 @@ class GameView(arcade.View):
 		:param height: Screen height
 		"""
 		super().__init__()
-		self.background = arcade.load_texture("images/starnight.jpeg")
+		# self.background = arcade.load_texture("images/starnight.jpeg")
+		self.background = arcade.load_texture("images/space2.jpeg")
 		self._keys = set()
 		self.score = 0
 		self.lives = PLAYER_LIVES
@@ -130,20 +140,22 @@ class GameView(arcade.View):
 		start_x = 20
 		start_y = SCREEN_HEIGHT - 100
 		
-		arcade.draw_rectangle_filled(self.reload_box.right//2,SCREEN_HEIGHT - 70,self.reload_box.right,140,(0,0,0,150))
+		# arcade.draw_rectangle_filled(self.reload_box.right//2,SCREEN_HEIGHT - 70,self.reload_box.right,140,(0,0,0,150))
+		arcade.draw_rectangle_filled(self.reload_box.right//2,SCREEN_HEIGHT - 70,self.reload_box.right + 1,140,arcade.color.DARK_MIDNIGHT_BLUE)
 		arcade.draw_text(score_text, start_x=start_x, start_y=start_y,
 						 font_size=30, color=arcade.color.WHITE)
 
 		text = f"Ammo: {self.ammo}"
 		arcade.draw_rectangle_filled(self.reload_box.right//2,SCREEN_HEIGHT - 705,self.reload_box.right,80,(0,0,0,150))
-		arcade.draw_text(text, self.reload_box.left, SCREEN_HEIGHT - (SCREEN_HEIGHT//1.10), font_size=30, color=arcade.color.WHITE)
+		# arcade.draw_text(text, self.reload_box.left, SCREEN_HEIGHT - (SCREEN_HEIGHT//1.10), font_size=30, color=arcade.color.WHITE)
+		arcade.draw_text(text, start_x, SCREEN_HEIGHT - (SCREEN_HEIGHT//1.10), font_size=30, color=arcade.color.WHITE)
 			
 	def draw_get_ready(self):
 		"""
 		Writes a get ready message on the screen 
 		"""
 		arcade.draw_text("Get ready", ((SCREEN_WIDTH - RELOAD_BOX_WIDTH) /2 ) + RELOAD_BOX_WIDTH, SCREEN_HEIGHT/2,
-						arcade.color.WHITE, font_size=30, anchor_x="center")
+						arcade.color.BLACK, font_size=30, anchor_x="center")
 
 	def update(self, delta_time):
 		"""
@@ -156,12 +168,7 @@ class GameView(arcade.View):
 		self.check_keys()
 		self.check_off_screen()
 		
-		# for bullet in self.bullets:
-		# 	bullet.update()
 		self.bullets.update()
-
-		# for meteor in self.meteors:
-		# 	meteor.update()
 
 		self.meteors.update()
 
@@ -169,9 +176,6 @@ class GameView(arcade.View):
 			if randint(0,self.delay) == 1:
 				self.create_meteor()
 
-		# if ((self.ship.center_x > SCREEN_WIDTH and self.ship.change_x > 0) or \
-		# 	(self.ship.center_x < 0 and self.ship.change_x < 0)):
-		# 	self.ship.change_x = 0
 		self.ship.update()
 
 		self.check_collisions()
@@ -384,31 +388,39 @@ class GameOverView(arcade.View):
 	""" Class that manages the 'game over' view. """
 	def __init__(self,score=0):
 		super().__init__()
+		self.background = arcade.load_texture("images/space1.jpeg")
 		self.window.set_mouse_visible(visible=True)
 		self.score = score
 		self.name = "Player"
 		self.gui = arcade.gui.UIManager(self.window)
 		
-		self.inputBox = arcade.gui.UIInputBox(self.window.width//2,self.window.height//2,200,30)
+		#This is necesary to possition the input text box
+		width, height = self.window.get_size()
+		self.inputBox = arcade.gui.UIInputBox(SCREEN_WIDTH // 2 ,SCREEN_HEIGHT // 2 - 25,200,30)
 		self.gui.add_ui_element(self.inputBox)
 		self.inputBox.render()
+
 		
-	def on_show(self):
-		""" Called when switching to this view"""
-		arcade.set_background_color(arcade.color.NEON_CARROT)
+	# def on_show(self):
+	# 	""" Called when switching to this view"""
+	# 	arcade.set_background_color(arcade.color.NEON_CARROT)
+	# 	pass
 		
 	def on_draw(self):
 		""" Draw the menu """
 		arcade.start_render()
 
+		# Draw the background texture
+		arcade.draw_lrwh_rectangle_textured(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
+
 		arcade.draw_text(f"--GAME OVER--\n", SCREEN_WIDTH/2, SCREEN_HEIGHT/2+50,
-						 arcade.color.GRAY, font_size=60, anchor_x="center")
+						 arcade.color.ALABAMA_CRIMSON, font_size=60, anchor_x="center")
 		arcade.draw_text(f"Player: {self.name}\nScore: {self.score}", SCREEN_WIDTH/2, SCREEN_HEIGHT/2+40,
-						 arcade.color.BLACK, font_size=30, anchor_x="center")
+						 arcade.color.WHITE, font_size=30, anchor_x="center")
 
 		if self.inputBox in self.gui._ui_elements:
-			arcade.draw_text(f" \nEnter Name:", SCREEN_WIDTH/2, SCREEN_HEIGHT//3+110,
-							arcade.color.GRAY, font_size=30, anchor_x="center")
+			arcade.draw_text(f" \nEnter Name:", SCREEN_WIDTH/2 , SCREEN_HEIGHT//3+85,
+							arcade.color.WHITE, font_size=30, anchor_x="center")
 
 			arcade.draw_text(f"Press Enter to submit name.", SCREEN_WIDTH/2, SCREEN_HEIGHT/3,
 							arcade.color.WHITE, font_size=26, anchor_x="center")

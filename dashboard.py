@@ -19,8 +19,10 @@ class Dashboard:
         self.get_question()
     
     def draw(self):
+        # The whole  dashbord in gray 
         arcade.draw_lrtb_rectangle_filled(self.left, self.right, self.top, self.bottom, self.color)
 
+        # Display the querstions and the possible answers
         arcade.draw_text(f"{self.question} = ",self.left+15, SCREEN_HEIGHT//2+10, arcade.color.DARK_BLUE, font_size=30)
         offset = 0
         for key in self.answers:
