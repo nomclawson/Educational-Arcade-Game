@@ -1,6 +1,16 @@
 from globals import *
 
 
+class Key(Sprite):
+    """
+    Key image
+    """
+    def __init__(self, x, y):
+        super().__init__(filename="images/transparent_key.png")
+        self.scale = 1
+        self.center_x = x
+        self.center_y = y
+
 class Dashboard:
     def __init__(self):
         self.color = arcade.color.DARK_GRAY
@@ -11,25 +21,26 @@ class Dashboard:
         self.math = Math()
         self.question = ""
         self.answer = 0
-        
         self.keys = [arcade.key.A, arcade.key.S, arcade.key.D, arcade.key.F]
-
         self.answers = {arcade.key.A : 0, arcade.key.S : 0, arcade.key.D : 0, arcade.key.F : 0}
         self.symbols = {arcade.key.A : "A", arcade.key.S : "S", arcade.key.D : "D", arcade.key.F : "F"}
         self.get_question()
+        self.keysImages = SpriteList()
+        key = Key(SCREEN_WIDTH //2,  SCREEN_HEIGHT // 2)
+        self.keysImages.append(key)
     
     def draw(self):
         # The whole  dashbord in gray 
         arcade.draw_lrtb_rectangle_filled(self.left, self.right, self.top, self.bottom, self.color)
-
+        # self.keysImages.draw()
         # Display the querstions and the possible answers
-        arcade.draw_text(f"{self.question} = ",self.left+15, SCREEN_HEIGHT//2+10, arcade.color.DARK_BLUE, font_size=30)
+        arcade.draw_text(f"{self.question} = ",self.left+15, SCREEN_HEIGHT//2+70, arcade.color.DARK_BLUE, font_size=30)
         offset = 0
         for key in self.answers:
             value = self.answers[key]
             symbol = self.symbols[key]
             offset -= 30
-            arcade.draw_text(f"{symbol}) {value}",self.left+30, SCREEN_HEIGHT//2+offset, arcade.color.DARK_BLUE, font_size=24)
+            arcade.draw_text(f"{symbol}) {value}",self.left+30, SCREEN_HEIGHT//2 + 50 +offset, arcade.color.DARK_BLUE, font_size=24)
         
     def check_answer(self, key):
         correct = self.answers[key] == self.answer
@@ -68,8 +79,6 @@ class Dashboard:
                 print()
         # print(self.answers)
         # print(self.question, self.answer)
-
-
     
 class Math:
     def __init__(self):
@@ -85,11 +94,11 @@ class Math:
             Phase 1 - hard coded questions
             Phase 2 - get questions from API
         """
-        my_operators = {'+':self.add, '-':self.sub, '*':self.mult}
+        my_operators = {'+':self.add, '-':self.sub, 'x':self.mult}
         m = randint(2,10)
         n = randint(2,10)
-        operator = choice(['+', '-', '*'])
-        self._question = f"{m}{operator}{n}"
+        operator = choice(['+', '-', 'x'])
+        self._question = f"{m} {operator} {n}"
         self._answer = my_operators[operator](m,n)
         
         return self._question 
@@ -118,6 +127,8 @@ class Math:
 
     def __str__(self):
         return f"{self.question} = "
+
+
 
 # math = Math()
 # print(math)
