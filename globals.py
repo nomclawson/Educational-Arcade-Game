@@ -13,7 +13,7 @@ START_DELAY = 120 # 1 in 120 chance per frame * 60 frames per second =~ 1 astero
 
 PLAYER_LIVES = 3
 SCREEN_TITLE = 'Math game'
-SHIP_SCALE= .1
+SHIP_SCALE= .095
 LASER_SCALE = .5
 LASER_SPEED = 30
 METEOR_SCALE = .1
