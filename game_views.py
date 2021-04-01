@@ -17,7 +17,6 @@ class Gui(arcade.gui.UIManager):
 		"""
 		Initializer
 		"""
-		print('Creating a GUI')
 		# Open a window in full screen mode. Remove fullscreen=True if
 		# you don't want to start this way.
 		super().__init__(window)
@@ -127,7 +126,7 @@ class GameView(arcade.View):
 		"""
 		super().__init__()
 		# self.background = arcade.load_texture("images/starnight.jpeg")
-		self.background = arcade.load_texture("images/space1.jpeg")
+		self.background = arcade.load_texture("images/space1.png")
 		self._keys = set()
 		self.score = 0
 		self.lives = PLAYER_LIVES
@@ -285,7 +284,7 @@ class GameView(arcade.View):
 				arcade.sound.play_sound(self.hit_sound)
 
 			#Check if a meteor crossed the bottom screen
-			elif meteor.bottom <= 0:
+			elif meteor.bottom <= 10:
 				self.create_explosion( meteor.center_x, meteor.center_y)
 				arcade.sound.play_sound(self.hit_sound)
 				self.lives -= 1
