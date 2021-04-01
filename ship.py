@@ -5,7 +5,6 @@ class Ship(Sprite):
     Ship class
     """
     def __init__(self ):
-        # super().__init__(filename="images/star-shooter.png")
         super().__init__(filename="images/ship2.png")
         self.center_x = (SCREEN_WIDTH - DASHBOARD_WIDTH) // 2 + DASHBOARD_WIDTH
         self.center_y = SHOTING_AREA_PADDING_BOTTOM

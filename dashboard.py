@@ -32,7 +32,6 @@ class Dashboard:
     def draw(self):
         # The whole  dashbord in gray 
         arcade.draw_lrtb_rectangle_filled(self.left, self.right, self.top, self.bottom, self.color)
-        # self.keysImages.draw()
         # Display the querstions and the possible answers
         arcade.draw_text(f"{self.question} = ",self.left+15, SCREEN_HEIGHT//2+70, arcade.color.DARK_BLUE, font_size=30)
         offset = 0
@@ -45,11 +44,9 @@ class Dashboard:
     def check_answer(self, key):
         correct = self.answers[key] == self.answer
         self.get_question()
-        # print(correct)
         return correct
     
     def fake_answer(self, answer):
-        # print(answer) -3 - (-3*.5), -3 + (-3*.5)
         if answer > 0:
             false_answer = randint(answer - int(answer * 0.5), answer + int(answer * .5))
         else:
@@ -70,15 +67,10 @@ class Dashboard:
         self.answers[correct_key] = self.answer
         for key in self.answers:
             if self.answers[key] != self.answer:
-                # false_answer = randint(0,100)
-                # false_answer = self.answer
                 # while false_answer in self.answers.values():
                 false_answer = self.fake_answer(self.answer)
                 
                 self.answers[key] = false_answer
-                print()
-        # print(self.answers)
-        # print(self.question, self.answer)
     
 class Math:
     def __init__(self):
@@ -128,12 +120,6 @@ class Math:
     def __str__(self):
         return f"{self.question} = "
 
-
-
-# math = Math()
-# print(math)
-# print(math)
-# print(math)
 
 
 

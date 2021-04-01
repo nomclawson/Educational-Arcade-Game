@@ -79,11 +79,6 @@ class MenuView(arcade.View):
 		super().__init__()
 		self.background = arcade.load_texture("images/space.jpeg")
 
-	# def on_show(self):
-	# 	""" Called when switching to this view"""
-	# 	arcade.set_background_color(arcade.color.BLACK)
-	# 	pass
-
 	def on_draw(self):
 		""" Draw the menu """
 		arcade.start_render()
@@ -125,7 +120,6 @@ class GameView(arcade.View):
 		:param height: Screen height
 		"""
 		super().__init__()
-		# self.background = arcade.load_texture("images/starnight.jpeg")
 		self.background = arcade.load_texture("images/space1.png")
 		self._keys = set()
 		self.score = 0
@@ -194,10 +188,8 @@ class GameView(arcade.View):
 		if(not self.animationsLoaded):
 			self.draw_get_ready()
 
-
+		#Draw the hearts on the screen 
 		self.lifeList.draw()
-
-		
 
 	def draw_score(self):
 		"""
@@ -207,14 +199,11 @@ class GameView(arcade.View):
 		start_x = 20
 		start_y = SCREEN_HEIGHT - 100
 		
-		# arcade.draw_rectangle_filled(self.dashboard.right//2,SCREEN_HEIGHT - 70,self.dashboard.right,140,(0,0,0,150))
 		arcade.draw_rectangle_filled(self.dashboard.right//2,SCREEN_HEIGHT - 70,self.dashboard.right + 1,140,arcade.color.DARK_MIDNIGHT_BLUE)
 		arcade.draw_text(score_text, start_x=start_x, start_y=start_y,
 						 font_size=30, color=arcade.color.WHITE)
 
 		text = f"Ammo: {self.ammo}"
-		# arcade.draw_rectangle_filled(self.dashboard.right//2,SCREEN_HEIGHT - 705,self.dashboard.right,80,(0,0,0,150))
-		# arcade.draw_text(text, self.dashboard.left, SCREEN_HEIGHT - (SCREEN_HEIGHT//1.10), font_size=30, color=arcade.color.WHITE)
 		arcade.draw_text(text, start_x, SCREEN_HEIGHT - (SCREEN_HEIGHT//1.10), font_size=30, color=arcade.color.WHITE)
 			
 	def draw_get_ready(self):
@@ -338,16 +327,13 @@ class GameView(arcade.View):
 		#Wait for animations to be loaded before accepting user input
 		if (self.animationsLoaded):
 			if key == arcade.key.LEFT:
-				# self.ship.move_left()
 				self._keys.add(key)
 
 			if key == arcade.key.RIGHT:
-				# self.ship.move_right()
 				self._keys.add(key)
 
 			if key == arcade.key.SPACE:
 				self.create_bullet()
-				# Gunshot sound
 
 		
 		if key == arcade.key.A or key == arcade.key.S or key == arcade.key.D or key == arcade.key.F:
@@ -379,8 +365,6 @@ class GameView(arcade.View):
 		if key == arcade.key.ESCAPE:			
 			self.gameOver()
 
-		
-
 	def on_key_release(self, key, key_modifiers):
 		"""
 		Called when a key is released. Sets the state of
@@ -395,18 +379,11 @@ class GameView(arcade.View):
 
 			if key == arcade.key.RIGHT:
 				self._keys.remove(key)
-				
-			if key == arcade.key.W or key == arcade.key.D:
-				pass
-				
-			if key == arcade.key.S or key == arcade.key.A:
-				pass
 
 	def create_bullet(self):
 		"""
 		Creates an instance of laser and appends it to the bullets sprite list
 		"""
-
 		if self.ammo > 0:
 			laser = Laser(self.ship.center_x, self.ship.center_y)
 			self.bullets.append(laser)
@@ -416,8 +393,6 @@ class GameView(arcade.View):
 	def reload(self):
 		self.ammo += 5
 		
-
-
 	def create_meteor(self):
 		"""
 		Creates an instance of Meteor and appends it to the meteors sprite list
@@ -452,8 +427,6 @@ class GameView(arcade.View):
 		Renders the GemeOverView and sends the score to the server
 		"""
 		self.window.show_view(GameOverView(self.score))
-		#Send score to server
-		#send(f"{self.score}")
 
 class GameOverView(arcade.View):
 	""" Class that manages the 'game over' view. """
@@ -463,14 +436,12 @@ class GameOverView(arcade.View):
 		self.window.set_mouse_visible(visible=True)
 		self.score = score
 		self.name = "Player"
-		# self.gui = arcade.gui.UIManager(self.window)
 		self.gui = Gui(self.window)
 		
 		#This is necesary to possition the input text box
 		self.inputBox = arcade.gui.UIInputBox(SCREEN_WIDTH // 2 ,SCREEN_HEIGHT // 2 - 25,200,30)
 		self.gui.add_ui_element(self.inputBox)
 
-		
 	def on_draw(self):
 		""" Draw the menu """
 		arcade.start_render()
@@ -525,8 +496,6 @@ class GameOverView(arcade.View):
 			# constants. This does NOT respect aspect ratio. You'd need to
 			# do a bit of math for that.
 			self.window.set_viewport(0, SCREEN_WIDTH, 0, SCREEN_HEIGHT)
-
-			
 
 	def get_name(self):
 		if self.inputBox.text != "":

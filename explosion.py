@@ -18,7 +18,6 @@ def  createExplosionTextureList():
 
 class Explosion(Sprite):
     """ This class creates an explosion animation """
-
     def __init__(self, texture_list, x, y):
         super().__init__()
 
