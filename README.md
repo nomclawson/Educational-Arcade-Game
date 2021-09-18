@@ -9,7 +9,7 @@ This was developed in Python using Arcade.
 # Collaborators
 
 - James Clawson
-- Nefi Hernandez
+- Nefi Aguilar
 - Collin Murphy
 - Calvin Wood
 
